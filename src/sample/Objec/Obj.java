@@ -3,7 +3,7 @@ package sample.Objec;
 /**
  * Created by tttt on 21.03.2017.
  */
-public interface Obj
+public  interface Obj
 {
 
     int pos_y = 0;

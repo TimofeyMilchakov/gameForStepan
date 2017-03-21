@@ -9,9 +9,9 @@ import java.util.Map;
  */
 public class EventsManager
 {
-     Map<String,Boolean> action;
-     Map<Integer,String> bind;
-     EventsManager()
+     static  Map<String,Boolean> action;
+     static  Map<Integer,String> bind;
+     static void setup()
      {
           bind.put(java.awt.Event.UP,"up");
           bind.put(java.awt.Event.LEFT,"left");
@@ -22,21 +22,21 @@ public class EventsManager
           action.put("tab",false);
           action.put("right",false);
      }
-     void onKeyUp(Event event)
+     static  void onKeyUp(Event event)
      {
-          String action = this.bind.get(event.key);
+          String action = EventsManager.bind.get(event.key);
           if(action.equals("up")||action.equals("left")||action.equals("tab")||action.equals("right"))
           {
-               this.action.remove(action,true);
+               EventsManager.action.remove(action,true);
           }
      }
 
-     void onKeyDown(Event event)
+     static  void onKeyDown(Event event)
      {
-          String action = this.bind.get(event.key);
+          String action = EventsManager.bind.get(event.key);
           if(!action.isEmpty())
           {
-               this.action.remove(action,false);
+               EventsManager.action.remove(action,false);
           }
      }
 }
