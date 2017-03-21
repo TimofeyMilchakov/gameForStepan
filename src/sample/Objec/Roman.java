@@ -3,7 +3,8 @@ package sample.Objec;
 /**
  * Created by tttt on 21.03.2017.
  */
-public class Roman implements Obj {
+public class Roman extends Objc  {
+
     @Override
     public void upDate() {
 

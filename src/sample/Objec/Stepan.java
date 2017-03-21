@@ -3,7 +3,14 @@ package sample.Objec;
 /**
  * Created by tttt on 21.03.2017.
  */
-public class Stepan implements Obj {
+public class Stepan  extends Objc {
+
+
+    public Stepan()
+    {
+
+
+    }
     @Override
     public void upDate() {
 
@@ -18,4 +25,5 @@ public class Stepan implements Obj {
     public void onTouchEntity() {
 
     }
+
 }
