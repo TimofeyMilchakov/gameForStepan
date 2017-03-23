@@ -9,11 +9,12 @@ public abstract class Objc
 {
     public int pos_y = 0;
     public int pos_x = 0;
-    public int size_x = 0;
-    public int size_y = 0;
+    public int size_x = 40;
+    public int size_y = 40;
     public int speed = 0;
     public int move_x = 0;
     public  int move_y = 0;
+    public int enegy=0;
     public String type;
     public int direction = 0;
     public Image image;
@@ -26,8 +27,15 @@ public abstract class Objc
         pos_y=y;
     }
 
-    public abstract void upDate();
+    public void upDate()
+    {
+        this.pos_y=this.pos_y+speed*move_y;
+        this.pos_x=this.pos_x+speed*move_x;
+        move_y=0;
+        move_x=0;
+    }
     public abstract void draw(Graphics g);
     public abstract void onTouchEntity(Objc e);
+
 
 }

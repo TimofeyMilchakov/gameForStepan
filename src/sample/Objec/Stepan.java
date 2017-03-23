@@ -7,19 +7,14 @@ import java.awt.*;
  */
 public class Stepan  extends Objc {
 
-
+    public boolean piy = false;
     public Stepan(Image image, int x, int y)
     {
         super("Stepan",image,x,y);
         direction=1;
+//        move_y=1;
+        speed=5;
 
-
-    }
-    @Override
-    public void upDate()
-    {
-
-        String type;
     }
 
     @Override

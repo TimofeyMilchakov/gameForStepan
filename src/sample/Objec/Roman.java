@@ -10,6 +10,7 @@ public class Roman extends Objc  {
     Roman(Image image, int x, int y)
     {
         super("Roman",image,x,y);
+
     }
 
     @Override

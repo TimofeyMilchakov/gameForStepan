@@ -36,17 +36,18 @@ public class Main  extends Canvas implements Runnable
     void setupManager()
     {
         bind=new HashMap<>();
-        bind.put(java.awt.Event.UP,"up");
-        bind.put(java.awt.Event.LEFT,"left");
-        bind.put(java.awt.Event.TAB,"tab");
-        bind.put(java.awt.Event.RIGHT,"right");
+        bind.put(KeyEvent.VK_UP,"up");
+        bind.put(KeyEvent.VK_LEFT,"left");
+        bind.put(KeyEvent.VK_TAB,"tab");
+        bind.put(KeyEvent.VK_RIGHT,"right");
         action=new HashMap<>();
         action.put("up",false);
         action.put("left",false);
         action.put("tab",false);
         action.put("right",false);
+        action.put("down", false);
         entities= new ArrayList<>();
-//        blocks=null;
+
         stepan = getStepan(400,300);
         laterKill=new ArrayList<>();
     }
@@ -59,7 +60,7 @@ public class Main  extends Canvas implements Runnable
     {
         for(int i =0;i<801;i=i+40)
         {
-//            Block b=getBlock(i,560);
+//
             entities.add(getBlock(i,570));
 
         }
@@ -81,7 +82,7 @@ public class Main  extends Canvas implements Runnable
     }
     public Stepan getStepan(int x, int y) {
         BufferedImage sourceImage = null;
-        String path="sl1.png";
+        String path="st1.png";
         try {
             URL url = this.getClass().getClassLoader().getResource(path);
             sourceImage = ImageIO.read(url);
@@ -117,7 +118,7 @@ public class Main  extends Canvas implements Runnable
         }
 
         Graphics g = bs.getDrawGraphics(); //ïîëó÷àåì Graphics èç ñîçäàííîé íàìè BufferStrategy
-        g.setColor(Color.black); //âûáðàòü öâåò
+        g.setColor(Color.cyan); //âûáðàòü öâåò
         g.fillRect(0, 0, getWidth(), getHeight()); //çàïîëíèòü ïðÿìîóãîëüíèê
         draw(g);
         g.dispose();
@@ -126,6 +127,7 @@ public class Main  extends Canvas implements Runnable
 
     private void draw(Graphics g)
     {
+        stepan.draw(g);
         for (int e = 0; e < entities.size(); e++) {
             entities.get(e).draw(g);
         }
@@ -135,31 +137,41 @@ public class Main  extends Canvas implements Runnable
     public void run()
     {
 
-        long lastTime = System.currentTimeMillis();
-        long delta;
+
 
         init();
 
         while(running)
         {
-            delta = System.currentTimeMillis() - lastTime;
-            lastTime = System.currentTimeMillis();
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            update();
             render();
-            update(delta);
+
         }
     }
-    public void update(long delta) {
-
+    public void update()
+    {
+        upDateGameManager();
     }
     public void upDateGameManager()
     {
         stepan.move_x=0;
         stepan.move_y = 0;
-        if (action.get("up")) stepan.move_y = -1;
-        if (action.get("tab")) stepan.move_y = 1;
+        stepan.piy=false;
+        if (action.get("up")&& stepan.enegy<=0) stepan.enegy = 100;
+        if (action.get("tab")) stepan.piy=true;
         if (action.get("left")) stepan.move_x = -1;
         if (action.get("right")) stepan.move_x = 1;
-        for (int e = 0; e < entities.size(); e++) {
+        upDatePhisicManager(stepan);
+        stepan.upDate();
+        for (int e = 0; e < entities.size(); e++)
+        {
+            upDatePhisicManager(entities.get(e));
             entities.get(e).upDate();
         }
     }
@@ -176,7 +188,7 @@ public class Main  extends Canvas implements Runnable
             String actio = bind.get(e.getKeyCode());
             if(actio.equals("up")||actio.equals("left")||actio.equals("tab")||actio.equals("right"))
             {
-                action.remove(action,true);
+                action.put(actio,true);
             }
         }
 
@@ -184,7 +196,7 @@ public class Main  extends Canvas implements Runnable
             String actio = bind.get(e.getKeyCode());
             if(actio.equals("up")||actio.equals("left")||actio.equals("tab")||actio.equals("right"))
             {
-                action.remove(action,false);
+                action.put(actio, false);
             }
         }
     }
@@ -207,39 +219,32 @@ public class Main  extends Canvas implements Runnable
         return null; // объект не найден
     }
 
-    String upDatePhisicManager(Objc obj)
+    void upDatePhisicManager(Objc obj)
     {
-        if (obj.move_x == 0 && obj.move_y == 0)
+        if(obj.enegy>0)
         {
-            return "stop";
+            obj.move_y=-1;
+            obj.enegy=obj.enegy-obj.speed;
         }
-        int newX = obj.pos_x+obj.move_x*obj.speed;
-        int newY = obj.pos_y+obj.move_y*obj.speed;
+        int newX = obj.pos_x + obj.move_x * obj.speed;
+        int newY = obj.pos_y + obj.move_y * obj.speed;
+        int downY = obj.pos_y + 1 * obj.speed;
 
-        Objc e = entityAtXY(obj,newX,newY);
+        Objc downE=entityAtXY(obj, obj.pos_x, downY);
+        Objc e = entityAtXY(obj, newX, newY);
         // объект на пути
         if (e != null) // если есть конфликт
         {
             obj.onTouchEntity(e);
         } // разбор конфликта внутри объекта
+        if(downE==null&& obj.enegy<=0)
+        {
 
-
-
-
-        switch (obj.move_x + 2 * obj.move_y) {
-            case -1: // двигаемся влево
-                return "left";
-//            break;
-            case 1: // двигаемся вправо
-                return "right";
-//            break;
-            case -2: // двигаемся вверх
-                return "up";
-//            break;
-            case 2: // стреляем
-                return "tab";
-//            break;
+            obj.move_y=1;
         }
-        return  "as";
+
+
+
     }
-}
+    }
+
