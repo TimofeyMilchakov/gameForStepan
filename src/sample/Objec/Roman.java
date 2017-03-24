@@ -7,16 +7,18 @@ import java.awt.*;
  */
 public class Roman extends Objc  {
 
-    Roman(Image image, int x, int y)
+    public Roman(int x, int y)
     {
-        super("Roman",image,x,y);
+        super("Roman",x,y);
+        image=getImage("r.png");
+        speed=1;
+        size_y=40;
+        size_x=22;
+
 
     }
 
-    @Override
-    public void upDate() {
 
-    }
 
     @Override
     public void draw(Graphics g) {
@@ -26,7 +28,14 @@ public class Roman extends Objc  {
 
 
     @Override
-    public void onTouchEntity(Objc e) {
+    public void onTouchEntity(Objc e)
+    {
+        move_y=0;
+        move_x=0;
+        if(e.type.equals("Sigi"))
+        {
+            delit=true;
+        }
 
     }
 

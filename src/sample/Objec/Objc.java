@@ -1,6 +1,10 @@
 package sample.Objec;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.URL;
 
 /**
  * Created by tttt on 21.03.2017.
@@ -14,15 +18,14 @@ public abstract class Objc
     public int speed = 0;
     public int move_x = 0;
     public  int move_y = 0;
-    public int enegy=0;
+    public int enegy=-1;
     public String type;
     public int direction = 0;
     public Image image;
     public boolean delit = false;
-    Objc(String i,Image image,int x,int y)
+    Objc(String i,int x,int y)
     {
         type=i;
-        this.image=image;
         pos_x=x;
         pos_y=y;
     }
@@ -36,6 +39,20 @@ public abstract class Objc
     }
     public abstract void draw(Graphics g);
     public abstract void onTouchEntity(Objc e);
+    Image getImage(String path) {
+        BufferedImage sourceImage = null;
+        try {
+            URL url = this.getClass().getClassLoader().getResource(path);
+            sourceImage = ImageIO.read(url);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Image image = Toolkit.getDefaultToolkit().createImage(sourceImage.getSource());
+        return image;
+
+
+    }
 
 
 }

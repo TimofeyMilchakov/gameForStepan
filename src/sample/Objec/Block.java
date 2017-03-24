@@ -6,9 +6,10 @@ import java.awt.*;
  * Created by tttt on 22.03.2017.
  */
 public class Block extends Objc {
-    public Block(Image image, int x, int y)
+    public Block( int x, int y)
     {
-        super("Block",image,x,y);
+        super("Block",x,y);
+        image=getImage("block.png");
 
 
     }
@@ -39,9 +40,10 @@ public class Block extends Objc {
         {
             e.move_x=1;
         }
+        e.enegy=-1;
         if(e.type.equals("Sigi"))
         {
-            e.delit=true;
+//            e.delit=true;
         }
     }
 }

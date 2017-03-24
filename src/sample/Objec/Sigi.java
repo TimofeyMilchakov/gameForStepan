@@ -6,13 +6,28 @@ import java.awt.*;
  * Created by tttt on 21.03.2017.
  */
 public class Sigi extends Objc  {
-    Sigi(Image image, int x, int y)
+    public Sigi(int x, int y, int i)
     {
-        super("Sigi",image,x,y);
+        super("Sigi",x,y);
+        if(i>0)
+        {
+            image = getImage("s1.png");
+        }
+        else {
+            image = getImage("s2.png");
+        }
+        move_x=i;
+        speed=4;
+        size_x=35;
+        size_y=4;
     }
 
     @Override
-    public void upDate() {
+    public void upDate()
+    {
+        this.pos_y=this.pos_y+2*move_y;
+        this.pos_x=this.pos_x+speed*move_x;
+//        move_y=0;
 
     }
 
@@ -23,8 +38,17 @@ public class Sigi extends Objc  {
 
 
     @Override
-    public void onTouchEntity(Objc e) {
-
+    public void onTouchEntity(Objc e)
+    {
+        if(!e.type.equals("Stepan")) {
+            delit = true;
+        }
+        if(e.type.equals("Roman"))
+        {
+            e.delit=true;
+        }
+//        move_x=0;
+//        move_y=0;
     }
 
 

@@ -1,18 +1,12 @@
 package sample;
 
-import sample.Objec.Block;
-import sample.Objec.Objc;
-import sample.Objec.Stepan;
+import sample.Objec.*;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferStrategy;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,29 +21,33 @@ public class Main  extends Canvas implements Runnable
     Stepan stepan;
     ArrayList<Objc> laterKill;
     private static final long serialVersionUID = 1L;
+    int time = 1000;
+    int sum = 1000;
 
     private boolean running;
 
     public static int WIDTH = 800;
     public static int HEIGHT = 600;
+    private boolean peres=true;
 
     void setupManager()
     {
         bind=new HashMap<>();
         bind.put(KeyEvent.VK_UP,"up");
         bind.put(KeyEvent.VK_LEFT,"left");
-        bind.put(KeyEvent.VK_TAB,"tab");
+        bind.put(KeyEvent.VK_SPACE,"space");
         bind.put(KeyEvent.VK_RIGHT,"right");
         action=new HashMap<>();
         action.put("up",false);
         action.put("left",false);
-        action.put("tab",false);
+        action.put("space",false);
         action.put("right",false);
         action.put("down", false);
         entities= new ArrayList<>();
 
-        stepan = getStepan(400,300);
+        stepan = new Stepan(400,350);
         laterKill=new ArrayList<>();
+        entities.add(stepan);
     }
 
     public void start() {
@@ -61,39 +59,22 @@ public class Main  extends Canvas implements Runnable
         for(int i =0;i<801;i=i+40)
         {
 //
-            entities.add(getBlock(i,570));
+//            entities.add(getBlock(i,570));
+            entities.add(new Block(i,570));
+            if(i<200||i>600)
+            {
+                entities.add(new Block(i,400));
+            }
+            else
+            {
+                entities.add(new Block(i,230));
+            }
 
         }
     }
 
-    public Block getBlock(int x, int y) {
-        BufferedImage sourceImage = null;
-        String path="block.png";
-        try {
-            URL url = this.getClass().getClassLoader().getResource(path);
-            sourceImage = ImageIO.read(url);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-        Block sprite = new Block(Toolkit.getDefaultToolkit().createImage(sourceImage.getSource()),x,y);
 
-        return sprite;
-    }
-    public Stepan getStepan(int x, int y) {
-        BufferedImage sourceImage = null;
-        String path="st1.png";
-        try {
-            URL url = this.getClass().getClassLoader().getResource(path);
-            sourceImage = ImageIO.read(url);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        Stepan sprite = new Stepan(Toolkit.getDefaultToolkit().createImage(sourceImage.getSource()),x,y);
-
-        return sprite;
-    }
 
     public static void main(String[] args)
     {
@@ -140,11 +121,23 @@ public class Main  extends Canvas implements Runnable
 
 
         init();
-
+        entities.add(new Roman(200,150));
         while(running)
         {
             try {
-                Thread.sleep(100);
+                Thread.sleep(10);
+                if(time==0)
+                {
+                    entities.add(new Roman(400,350));
+                    if(sum!=1) {
+                        sum = sum - 1;
+                        time=sum;
+                    }
+                }
+                else
+                {
+                    time--;
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -162,17 +155,35 @@ public class Main  extends Canvas implements Runnable
     {
         stepan.move_x=0;
         stepan.move_y = 0;
-        stepan.piy=false;
-        if (action.get("up")&& stepan.enegy<=0) stepan.enegy = 100;
-        if (action.get("tab")) stepan.piy=true;
+
+        if (action.get("up")&& stepan.enegy==-1) stepan.enegy = 200;
+        if (action.get("space"))
+        {
+            stepan.piy=true;
+        }
+        else
+        {
+            stepan.piy=false;
+            peres=true;
+        }
         if (action.get("left")) stepan.move_x = -1;
         if (action.get("right")) stepan.move_x = 1;
-        upDatePhisicManager(stepan);
-        stepan.upDate();
+//        upDatePhisicManager(stepan);
+//        stepan.upDate();
+        for(int i=0;i<laterKill.size();i++)
+        {
+            entities.remove(laterKill.get(i));
+        }
+        laterKill.clear();
         for (int e = 0; e < entities.size(); e++)
         {
+
             upDatePhisicManager(entities.get(e));
             entities.get(e).upDate();
+            if(entities.get(e).delit)
+            {
+                laterKill.add(entities.get(e));
+            }
         }
     }
 
@@ -186,7 +197,7 @@ public class Main  extends Canvas implements Runnable
    private  class KeyInputHandler extends KeyAdapter {
         public void keyPressed(KeyEvent e) {
             String actio = bind.get(e.getKeyCode());
-            if(actio.equals("up")||actio.equals("left")||actio.equals("tab")||actio.equals("right"))
+            if(actio.equals("up")||actio.equals("left")||actio.equals("space")||actio.equals("right"))
             {
                 action.put(actio,true);
             }
@@ -194,7 +205,7 @@ public class Main  extends Canvas implements Runnable
 
         public void keyReleased(KeyEvent e) {
             String actio = bind.get(e.getKeyCode());
-            if(actio.equals("up")||actio.equals("left")||actio.equals("tab")||actio.equals("right"))
+            if(actio.equals("up")||actio.equals("left")||actio.equals("space")||actio.equals("right"))
             {
                 action.put(actio, false);
             }
@@ -219,12 +230,55 @@ public class Main  extends Canvas implements Runnable
         return null; // объект не найден
     }
 
+    void logicsPoman(Objc obj)
+    {
+        if(stepan.pos_x>obj.pos_x)
+        {
+            obj.move_x=1;
+        }
+        else
+        {
+            obj.move_x=-1;
+        }
+        if(stepan.pos_y<obj.pos_y)
+        {
+            obj.enegy=200;
+        }
+    }
+
     void upDatePhisicManager(Objc obj)
     {
+        if(obj.type.equals("Roman"))
+        {
+            logicsPoman(obj);
+        }
         if(obj.enegy>0)
         {
             obj.move_y=-1;
             obj.enegy=obj.enegy-obj.speed;
+        }
+        if(obj.type.equals("Stepan"))
+        {
+
+            if(((Stepan) obj).piy)
+            {
+                if(obj.move_x!=0&&peres)
+                {
+                    Sigi sigi=new Sigi(obj.pos_x+36*obj.move_x,obj.pos_y+20,obj.move_x);
+                    entities.add(sigi);
+                }
+                obj.direction=1;
+                peres=false;
+            }
+            else
+            {
+
+                obj.direction=0;
+            }
+        }
+        if(obj.type.equals("Roman"))
+        {
+            int rer = 123;
         }
         int newX = obj.pos_x + obj.move_x * obj.speed;
         int newY = obj.pos_y + obj.move_y * obj.speed;
@@ -237,11 +291,19 @@ public class Main  extends Canvas implements Runnable
         {
             obj.onTouchEntity(e);
         } // разбор конфликта внутри объекта
-        if(downE==null&& obj.enegy<=0)
+        if(downE==null )
         {
-
-            obj.move_y=1;
+            if(obj.move_y==0) {
+                obj.move_y = 1;
+            }
+        }else
+        {
+            if(downE.type.equals("Block"))
+            {
+                obj.enegy=-1;
+            }
         }
+
 
 
 
